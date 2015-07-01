@@ -19,12 +19,20 @@ company_types = {0: "none",
                  14: "construction"}
 
 
+class APIError(Exception):
+    pass
+
+
 class Citizen:
     def __init__(self, search_by, citizen_id):
         if search_by == "name":
             json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id).json()
         elif search_by == "id":
             json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id).json()
+
+        if 'message' in json:
+            raise APIError(json["message"])
+
         self.raw_json = json
         self.id = json["id"]
         self.name = json["name"]
@@ -47,6 +55,10 @@ class Company:
             json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?name=" + company_id).json()
         elif search_by == "id":
             json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?id=" + company_id).json()
+
+        if 'message' in json:
+            raise APIError(json["message"])
+
         self.raw_json = json
         self.id = json["id"]
         self.name = json["name"]
