@@ -4,8 +4,11 @@ import requests
 
 
 class Citizen:
-    def __init__(self, citizen_name):
-        json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_name).json()
+    def __init__(self, search_by, citizen_id):
+        if search_by == "name":
+            json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id).json()
+        elif search_by == "id":
+            json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id).json()
         self.raw_json = json
         self.id = json["id"]
         self.avatar_url = json["avatar-link"]
