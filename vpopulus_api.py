@@ -63,4 +63,12 @@ class Company:
         self.market_offers = json["market-offers"]  # TODO: more detailed data returned if possible
 
 
+class Raw:
+    def __init__(self, url):
+        self.request = requests.get(url)
+        self.json = self.request.json()
+
+
+
+
 
