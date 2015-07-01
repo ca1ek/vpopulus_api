@@ -11,6 +11,7 @@ class Citizen:
             json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id).json()
         self.raw_json = json
         self.id = json["id"]
+        self.name = json["name"]
         self.avatar_url = json["avatar-link"]
         self.wellness = json["wellness"]
         self.skills = json["skills"]
