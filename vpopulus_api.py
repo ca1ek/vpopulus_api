@@ -2,6 +2,22 @@ __author__ = 'ca1ek'
 
 import requests
 
+company_types = {0: "none",
+                 1: "grain",
+                 2: "food",
+                 3: "fruit",
+                 4: "juice",
+                 5: "iron",
+                 6: "weapon",
+                 7: "oil",
+                 8: "moving ticket",
+                 9: "wood",
+                 10: "house",
+                 11: "hospital",
+                 12: "defense system",
+                 13: "hotel",
+                 14: "construction"}
+
 
 class Citizen:
     def __init__(self, search_by, citizen_id):
