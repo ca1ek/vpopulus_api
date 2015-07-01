@@ -40,3 +40,27 @@ class Citizen:
         self.newspaper = json["newspaper"]
         self.date_of_birth = json["date-of-birth"]
 
+
+class Company:
+    def __init__(self, search_by, company_id):
+        if search_by == "name":
+            json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?name=" + company_id).json()
+        elif search_by == "id":
+            json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?id=" + company_id).json()
+        self.raw_json = json
+        self.id = json["id"]
+        self.name = json["name"]
+        self.avatar_url = json["avatar-link"]
+        self.location = json["location"]["country"]
+        self.region = json["location"]["region"]
+        self.type = json["type"]["id"]
+        self.quality = json["quality"]
+        self.stock = json["stock"]
+        self.queue = json["queue"]
+        self.materials = json["materials"]
+        self.employee_count = json["employee-count"]
+        self.job_offers = json["job-offers"]        # TODO: more detailed data returned if possible
+        self.market_offers = json["market-offers"]  # TODO: more detailed data returned if possible
+
+
+
