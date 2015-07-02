@@ -54,6 +54,7 @@ class Citizen:
         self.raw_json = json
         self.id = int(json["id"])
         self.name = json["name"]
+        self.experience = json["experience"]
         if self.using_new_api:
             self.avatar_url = json["avatar"]
         else:
