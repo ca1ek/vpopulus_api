@@ -39,8 +39,14 @@ class Citizen:
     def __init__(self, search_by, citizen_id):
         if search_by == "name":
             json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id)
+            self.using_new_api = False
         elif search_by == "id":
-            json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id)
+            try:
+                json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id)
+                self.using_new_api = False
+            except APIUnavailable:
+                json = get_from_api("http://newapi.vpopulus.net/api/citizen/getByID/" + citizen_id)["citizen"]
+                self.using_new_api = True
 
         if 'message' in json:
             raise APIError(json["message"])
@@ -48,7 +54,10 @@ class Citizen:
         self.raw_json = json
         self.id = json["id"]
         self.name = json["name"]
-        self.avatar_url = json["avatar-link"]
+        if self.using_new_api:
+            self.avatar_url = json["avatar"]
+        else:
+            self.avatar_url = json["avatar-link"]
         self.wellness = json["wellness"]
         self.skills = json["skills"]
         self.citizenship = json["citizenship"]["country"]
@@ -57,8 +66,14 @@ class Citizen:
         self.company = json["company"]
         self.party = json["party"]
         self.army = json["army"]
-        self.newspaper = json["newspaper"]
-        self.date_of_birth = json["date-of-birth"]
+        if self.using_new_api:
+            self.newspaper = None
+        else:
+            self.newspaper = json["newspaper"]
+        if self.using_new_api:
+            self.date_of_birth = json["creation_date"]
+        else:
+            self.date_of_birth = json["date-of-birth"]
 
 
 class Company:
