@@ -36,29 +36,29 @@ class APIUnavailable(Exception):
 
 
 class Citizen:
-    def __init__(self, search_by, citizen_id):
-        if search_by == "name":
+    def __init__(self, citizen_id):
+        if type(citizen_id) is str:
             json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id)
             self.using_new_api = False
-        elif search_by == "id":
+        elif type(citizen_id) is int:
             try:
-                json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id)
+                json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + str(citizen_id))
                 self.using_new_api = False
             except APIUnavailable:
-                json = get_from_api("http://newapi.vpopulus.net/api/citizen/getByID/" + citizen_id)["citizen"]
+                json = get_from_api("http://newapi.vpopulus.net/api/citizen/getByID/" + str(citizen_id))["citizen"]
                 self.using_new_api = True
 
         if 'message' in json:
             raise APIError(json["message"])
 
         self.raw_json = json
-        self.id = json["id"]
+        self.id = int(json["id"])
         self.name = json["name"]
         if self.using_new_api:
             self.avatar_url = json["avatar"]
         else:
             self.avatar_url = json["avatar-link"]
-        self.wellness = json["wellness"]
+        self.wellness = int(json["wellness"])
         self.skills = json["skills"]
         self.citizenship = json["citizenship"]["country"]
         self.location = json["location"]["country"]
@@ -75,13 +75,16 @@ class Citizen:
         else:
             self.date_of_birth = json["date-of-birth"]
 
+    def look_up_company(self):
+        return Company(self.company["id"])
+
 
 class Company:
-    def __init__(self, search_by, company_id):
-        if search_by == "name":
+    def __init__(self, company_id):
+        if type(company_id) is str:
             json = get_from_api("http://api.vpopulus.net/v1/feeds/company.json?name=" + company_id)
-        elif search_by == "id":
-            json = get_from_api("http://api.vpopulus.net/v1/feeds/company.json?id=" + company_id)
+        elif type(company_id) is int:
+            json = get_from_api("http://api.vpopulus.net/v1/feeds/company.json?id=" + str(company_id))
 
         if 'message' in json:
             raise APIError(json["message"])
@@ -109,8 +112,3 @@ class Raw:
             raise APIUnavailable("HTTP Error 503 - Service unavailable")
         else:
             self.json = self.request.json()
-
-
-
-
-
