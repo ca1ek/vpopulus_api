@@ -19,16 +19,28 @@ company_types = {0: "none",
                  14: "construction"}
 
 
+def get_from_api(link):
+    r = requests.get(link)
+    if r.status_code == 503:
+        raise APIUnavailable("HTTP Error 503 - Service unavailable")
+    else:
+        return r.json()
+
+
 class APIError(Exception):
+    pass
+
+
+class APIUnavailable(Exception):
     pass
 
 
 class Citizen:
     def __init__(self, search_by, citizen_id):
         if search_by == "name":
-            json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id).json()
+            json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?name=" + citizen_id)
         elif search_by == "id":
-            json = requests.get("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id).json()
+            json = get_from_api("http://api.vpopulus.net/v1/feeds/citizen.json?id=" + citizen_id)
 
         if 'message' in json:
             raise APIError(json["message"])
@@ -52,9 +64,9 @@ class Citizen:
 class Company:
     def __init__(self, search_by, company_id):
         if search_by == "name":
-            json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?name=" + company_id).json()
+            json = get_from_api("http://api.vpopulus.net/v1/feeds/company.json?name=" + company_id)
         elif search_by == "id":
-            json = requests.get("http://api.vpopulus.net/v1/feeds/company.json?id=" + company_id).json()
+            json = get_from_api("http://api.vpopulus.net/v1/feeds/company.json?id=" + company_id)
 
         if 'message' in json:
             raise APIError(json["message"])
@@ -78,7 +90,10 @@ class Company:
 class Raw:
     def __init__(self, url):
         self.request = requests.get(url)
-        self.json = self.request.json()
+        if self.request.status_code == 503:
+            raise APIUnavailable("HTTP Error 503 - Service unavailable")
+        else:
+            self.json = self.request.json()
 
 
 
