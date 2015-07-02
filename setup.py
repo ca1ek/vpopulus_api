@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='vpopulus_api',
-      version='0.2',
+      version='0.2.1',
       description='An API for the vPopulus browser game',
       url='https://github.com/ca1ek/vpopulus_api',
       author='ca1ek',
